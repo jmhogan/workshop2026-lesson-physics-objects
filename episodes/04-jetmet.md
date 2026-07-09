@@ -17,35 +17,35 @@ exercises: 0
 
 ::::::::
 
-After tracks and energy deposits in the CMS tracking detectors (inner, muon) and calorimeters (electromagnetic, hadronic) are reconstructed as particle flow candidates, an event can be interpreted in various ways. Two common elements of event interpretation are **clustering jets** and calculating **missing transverse momentum**.
+After tracks and energy deposits in the CMS tracking detectors, calorimeters, and muon detectors are reconstructed as particle flow candidates, an event can be interpreted in various ways. Two common elements of event interpretation are **clustering jets** and calculating **missing transverse momentum**.
 
 ## Jets
 
-Jets are spatially-grouped collections of long-lived particles that are produced when a quark or gluon hadronizes. The kinetmatic properties of
-jets resemble that of the initial partons that produced them. In the CMS language, jets are made up of many particles, with the
+When a quark or gluon travels through the detector material, it creates a dense shower of long-lived particles. These particles can be clustered together into "jets". The momentum and energy of
+a jet resembles that of the initial quark or gluon that produced it. In the CMS language, jets are made up of many particles, with the
 following predictable energy composition:
 
 *   ~65% charged hadrons
-*   ~25% photons (from neutral pions)
+*   ~25% photons (usually produced when neutral pi mesons decay)
 *   ~10% neutral hadrons
 
-Jets are very messy! Hadronization and the subsequent decays of unstable hadrons can produce 100s of particles near each other in the CMS detector.
-Hence these particles are rarely analyzed individually. How can we determine which particle candidates should be included in each jet?
+Jets are very messy! Hadron showers can produce 100s of particles near each other in the CMS detector, so these particles are rarely analyzed individually. 
+How can we determine which particle candidates should be included in each jet?
 
 ### Clustering
 
 Jets can be clustered using a variety of different inputs from the CMS detector. "CaloJets" use only calorimeter energy deposits. "GenJets" use generated
 particles from a simulation. But by far the most common are "PFJets", from **particle flow candidates**.
 
-The result of the CMS Particle Flow algorithm is a list of particle candidates that account for all inner-tracker and muon tracks and all above-threshold
-energy deposits in the calorimeters. These particles are formed into jets using a "clustering algorithm". The most common algorithm used by CMS is the
+As we've learned, the result of the CMS Particle Flow algorithm is a list of particle candidates. These particles are formed into jets using a "clustering algorithm". 
+The most common algorithm used by CMS is the
 "anti-kt" algorithm, which is abbreviated "AK". It iterates over particle pairs and finds the two (*i* and *j*) that are the closest in some distance
 measure and determines whether to combine them:
 
 $d_{ij} = \min(p^{-2}_{T,i},p^{-2}_{T,j}) \Delta R^2_{ij}/R^2$
 
 Particle pairs are combined as long as $d_{ij} < p^{-2}_{T,i}$. The momentum power (-2) used by the anti-kt algorithm means that higher-momentum particles are clustered first.
-This leads to jets with a round shape that tend to be centered on the hardest particle. In CMS software this clustering is implemented using the [FastJet](www.fastjet.fr) package. 
+This leads to jets with a round shape that tend to be centered on the highest momentum particle.  
 
 ![](fig/clustering.png){width="100%"}
 
@@ -54,16 +54,16 @@ This leads to jets with a round shape that tend to be centered on the hardest pa
 
 ### Pileup
 
-Inevitably, the list of particle flow candidates contains particles that did not originate from the primary interaction point. CMS experiences multiple
+Inevitably, the list of particle flow candidates contains particles that did not originate from the primary collision. CMS experiences multiple
 simultaneous collisions, called "pileup", during each "bunch crossing" of the LHC, so particles from multiple collisions coexist in the detector.
 There are various methods to remove their contributions from jets:
 
- * Charged hadron subtraction [CHS](http://cms-results.web.cern.ch/cms-results/public-results/preliminary-results/JME-14-001/index.html): all charged hadron candidates 
- are associated with a track. If the track is not associated with the primary vertex, that
+ * Charged hadron subtraction [CHS](http://cms-results.web.cern.ch/cms-results/public-results/preliminary-results/JME-14-001/index.html): all charged hadron PF candidates 
+ are associated with a track. If the track is not connected with the primary vertex, that
  charged hadron can be removed from the list. CHS is limited to the region of the detector covered by the inner tracker. The pileup contribution to
- neutral hadrons has to be removed mathematically -- more in episode 3!
+ neutral hadrons has to be removed mathematically since those candidates have no tracks.
  * PileUp Per Particle Identification (PUPPI, available in Run 2): CHS is applied, and then all remaining particles are weighted based on their likelihood of arising from
- pileup. This method is more stable and performant in high pileup scenarios such as the upcoming HL-LHC era.
+ pileup. This method is more stable and performs very well in high pileup scenarios such as the upcoming HL-LHC era.
 
 ## Small-radius jets in NanoAOD
 
@@ -231,12 +231,16 @@ Table: Jet collection branches
 :::::::::::::::::
 
 Beyond the 4-vector information, `FatJet_jetId` variable, and cross-reference indices, the overwhelming majority of variables stored for FatJets are used
-to identify hadronic decays of high-momentum massive SM particles like top quarks, Higgs bosons, W bosons, and Z bosons. This will be covered in a later lesson.
+to identify hadronic decays of high-momentum massive SM particles like top quarks, Higgs bosons, W bosons, and Z bosons. This will be covered in the next page.
 
 ## MET
 
 [Missing transverse momentum](https://cds.cern.ch/record/1543527) is the negative vector sum of the transverse momenta of all particle flow candidates in an event. 
-The magnitude of the missing transverse momentum vector is called missing transverse energy and referred to with the acronym "MET". 
+The magnitude of the missing transverse momentum vector is called missing transverse energy and referred to with the acronym "MET". In a perfect collision, the colliding particles
+would have exactly 0 momentum in the $x$ or $y$ direction. If all of the collision products are detecter perfectly in CMS, the "missing" momentum found when we calculate
+this vector sum would also be 0. In real life, some particles are not detected at all by CMS, and all particles are measured with slight imperfections, creating MET. Types of
+particles that would produce "real" MET include neutrinos, dark matter particles, or other exotic particles that would not interact in CMS.
+
 Since energy corrections are made to the particle flow jets (see the last page in this lesson), those corrections are propagated to MET by adding back the momentum vectors of the
 original jets and then subtracting the momentum vectors of the corrected jets. This correction is called "Type 1" and is standard for all CMS analyses.
 
