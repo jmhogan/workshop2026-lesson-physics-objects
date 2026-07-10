@@ -18,31 +18,26 @@ exercises: 0
 
 :::::::::::
 
-Jet reconstruction and identification is an important part of the analyses at the LHC. A jet may contain
-the hadronization products of any quark or gluon, or possibly the decay products of more massive particles such as W or Higgs bosons.
-Several "b tagging" algorithms exist to identify jets from the hadronization of b quarks, which have unique
+Jet reconstruction and identification is an important part of the analyses at the LHC. Jets can originate from many different types of particles. The figure below gives an example of how different "parent particles" can influence the internal structure of a jet. Observables related to the **mass** and **internal structure** of a jet can help us design algorithms to distinguish between sources. 
+![](fig/JetTypes.PNG){width="100%"}
+
+Several "b tagging" algorithms exist to identify jets from b quarks, which have unique
 properties that distinguish them from light quark or gluon jets. 
 
 ## B Tagging Algorithms
 
-Tagging algorithms first connect the jets with good quality tracks that are either associated with one of the jet's particle flow candidates or within a nearby cone.
-Both tracks and "secondary vertices" (track vertices from the decays of b hadrons) can be used in track-based, vertex-based, or "combined" tagging algorithms.
-The specific details depend upon the algorithm use. However, they all exploit properties of b hadrons such as:
+Tagging algorithms first connect jets with particle tracks that are either connected to one of the jet's particle flow candidates, or lie within a nearby cone.
+Both tracks and "secondary vertices" (points where multiple tracks emerge within a jet) can be used in track-based, vertex-based, or "combined" tagging algorithms.
+The specific details depend upon the algorithm, but they all rely on special properties of b hadrons such as:
 
- * long lifetime,
+ * long lifetime compared to other particles produced in a collision, which allows b hadrons to travel away from the collision before decaying,
  * large mass,
- * high track multiplicity,
- * large semileptonic branching fraction,
- * hard fragmentation fuction. 
+ * high number of tracks compared to other types of quark jets,
+ * higher probability of producing a low-momentum electron or muon.
+   
+In recent CMS Open Data, the most important b-tagging algorithms are:
 
-In CMS, several b tagging algorithms have existed over time:
-
- * Track Counting: identifies a b jet if it contains at least N tracks with significantly non-zero impact parameters.
- * Jet Probability: combines information from all selected tracks in the jet and uses probability density functions to assign a probability to each track
- * Soft Muon and Soft Electron: identifies b jets by searching for a lepton from a semi-leptonic b decay.
- * Simple Secondary Vertex: reconstructs the b decay vertex and calculates a discriminator using related kinematic variables.
- * Combined Secondary Vertex (CSV): exploits all known kinematic variables of the jets, information about track impact parameter significance and the secondary vertices
- to distinguish b jets. This tagger became the default CMS algorithm in Run 1 and early Run 2.
+ * Combined Secondary Vertex (CSV): many properties of jets, tracks, and secondary vertices are combined into a "boosted decision tree", which is a simple form of machine learning. This tagger became the default CMS algorithm in Run 1 and early Run 2.
  * **DeepCSV**: the CSV algorithm was reimagined as a deep neural network.
  * **DeepJet**: this deep neural network tagger uses a more complex architecture than DeepCSV, and is the most powerful b tagging algorithm for Run 2.
 
@@ -68,7 +63,7 @@ Table: NanoAOD b tagging discriminators
 A jet is considered "b tagged" if the discriminator value exceeds some threshold. Different thresholds will have different
 efficiencies for identifying true b quark jets and for mis-tagging light quark jets. As we saw for muons and other objects,
 a "loose" working point will allow the highest mis-tagging rate, while a "tight" working point will sacrifice some correct-tag
-efficiency to reduce mis-tagging. The DeepCSV and DeepJet algorithms are supported by CMS for 2016 Open Data. 
+efficiency in order to reduce mis-tagging. The DeepCSV and DeepJet algorithms are supported by CMS for 2016 Open Data. 
 
 The supported working points for DeepCSV and DeepJet for the 2016 Open Data are:
 
@@ -82,27 +77,25 @@ The figure below shows the relationship between b jet efficiency and working poi
 
 ## FatJet tagging algorithms
 
-Jets can originate from many different types of particles. The figure below gives an example of how different "parent particles" can influence the internal structure of a jet. Observables related to the **mass** and **internal structure** of a jet can help us design algorithms to distinguish between sources. The most common type of algorithm identifies **b quark jets** from light quark or gluon jets. The POET contains all the tools you need to evaluate the default CMS b tagging discriminants on small-radius jets. See the next episode for more information. In this lesson we will focus on tools to identify hadronic decays of Lorentz-boosed massive SM particles within large-radius jets.
-
-![](fig/JetTypes.PNG){width="100%"}
+In CMS NanoAOD, the "fat" jets have a larger cone size than standard jets. These larger jets are ideal for identifying top quarks or W, Z, or Higgs bosons that have been produced with high momentum and have decayed to several quarks. All of these decay products can be caught within one large-radius jet cone. Several identification algorithms are used in CMS to tell the different sources apart.
 
 ### Groomed mass and substructure 
 
-The mass of a jet is evaluated by summing the energy-momentum four-vectors of all the particle flow candidates that make up the jet and computing the mass of the resulting object. This mass calculation is distorted by the low-momentum and wide-angle gluon radiation emerging from the initial hadrons that formed the jet. For example, the masses of light quark or gluon jets are measured to be much larger than the actual masses of these particles -- typically 10--50 GeV with a smooth continuum to higher values. **Grooming** procedures can help reduce the impact of this radiation and bring the jet mass closer to the true values of the parent particles. Grooming algorithms typically cluster the jet's consitituents into "subjets", like those represented by the small circles in the figure below. The relationships between different subjets can then be tested to decide which to keep.
+The mass of a jet is evaluated by summing the energy-momentum four-vectors of all the particle flow candidates that make up the jet and computing the mass of the resulting object. This mass calculation is distorted by gluons that radiate energy away from the initial particles that formed the jet. For example, the masses of light quark jets are measured to be much larger than the actual masses of these quarks -- typically 10--50 GeV. **Mass Grooming** procedures can help reduce the impact of this radiation and bring the jet mass closer to the true values of the parent particles. Grooming algorithms typically cluster the jet's consitituents into "subjets", like those represented by the small circles in the figure below. The relationships between different subjets can then be tested to decide which to keep.
 
 ![](fig/Subjet.PNG)
 
-The "softdrop" mass is included in NanoAOD for large-radius jets. In the "softdrop" procedure, jets are recursively de-clustered, and at each step jets that are too soft or at large angles are discarded. The following image shows the relationship between FatJet momentum, mass, and jet radius. As the momentum increases, jets of larger mass become contained within the FatJet. While W bosons can be observed from 200 GeV, top quarks require a higher momentum threshold.
+The "softdrop" mass is included in NanoAOD for large-radius jets. In the "softdrop" procedure, jets are recursively de-clustered, and at each step subjets that are too low in momentum or large angles separating them from other subjets are discarded. The following image shows the relationship between FatJet momentum, mass, and jet radius. As the momentum increases, jets of larger mass become contained within the FatJet. While W bosons with a mass of 80 GeV can be observed from 200 GeV, top quarks with a mass of 170 GeV require a higher momentum threshold.
 
 ![](fig/MassVsPt.PNG){width="60%"}
 
 The internal structure of a jet can be probed using many observables: [N-subjettiness](https://arxiv.org/abs/1011.2268?context=hep-ph), energy correlation functions, and others. In CMS, N-subjettiness is the default jet substructure variable for identifying boosted particle decays.
 
-The "tau" variables of N-subjettiness, defined below, are jet shape variables whose value approaches 0 for jets having N or fewer subjets:
+The "tau" variables of N-subjettiness, defined below, are jet shape variables whose value approaches 0 for jets having N or fewer subjets. Top quarks typically decay to 3 quarks, so we would expect small tau values for N = 3, 4, 5, 6, etc, but larger values for N = 1 or 2.
 
 $\tau_{N} = \frac{\sum^{n_{\mathrm{constituents}}}_{i=1} p_{\mathrm{T},i} \min{\Delta R_{1,i}, \Delta R_{2,i}, \ldots, \Delta R_{N,i}}}{\sum^{n_{\mathrm{constituents}}}_{i=1} p_{T,i}R}$
 
-If the value approaches zero it indicates that the consitituents all lie near one of the previously identified subjet axes. For a top quark jet with 3 subjets, we would expect small tau values for N = 3, 4, 5, 6, etc, but larger values for N = 1 or 2. Ratios of tau values provide the best discrimination for jets with a specific number of subjets. For two-prong jets like W, Z, or H boson decays, we study the ratio tau_2 / tau_1. For three-prong jets we study tau_3 / tau_2. 
+Ratios of tau values provide the best discrimination for jets with a specific number of subjets. For two-quark jets like W, Z, or H boson decays, we study the ratio tau_2 / tau_1. For three-quark jets we study tau_3 / tau_2. 
 
 The figures below show the relevant tau ratios for W boson (left) and top quark (right) jets. The structure in the tau_2/tau_1 plot is very unique: W bosons pool at lower values of tau_2/tau_1, while top quarks (with more than 2 subjets) and light quarks (with only 1 subjet) pool at medium and higher values.
 In the tau_3/tau_2 plot, top quark jets have low values while both W boson and light quark jets are gathered near 1.
@@ -184,34 +177,6 @@ Table: FatJet branches for deep network taggers
 | FatJet_particleNet_ZvsQCD | Float_t | ParticleNet tagger Z vs QCD discriminator |
 | FatJet_particleNet_mass | Float_t | ParticleNet mass regression |
 
-:::::::::::::::::::::
-
-## Tagger scale factors
-
-Scale factors to increase or decrease the number of tagged jets in simulation can be applied in a number of ways, but typically involve weighting simulation
-events based on the efficiencies and scale factors relevant to each jet in the event.
-
-For small-radius jet b-tagging, details and usage references from Run 1 can be found at these references.
-The concepts and methods for applying scale factors are unchanged in Run 2.
-
- * [Explanation](https://twiki.cern.ch/twiki/bin/view/CMSPublic/BtagRecommendation2011OpenData#Data_MC_Scale_Factors)
- * [Examples of application methods](https://twiki.cern.ch/twiki/bin/view/CMSPublic/BtagRecommendation2011OpenData#Methods_to_Apply_b_Tagging_Effic)
-
-The most common scale factor application method (1a) relies on 4 pieces of information for each jet in simulation:
- * Tagging status: does this jet pass the discriminator threshold for a given working point?
- * Flavor (b, c, light): accessed using a `pat::Jet` member function called `partonFlavour()`.
- * Efficiency: measured as a function of momentum as in the image above.
- * Scale factor: accessed from the 
-
-For large-radius jet tagging, scale factors are computed for specific boosted particle flavors and can be applied using similar methods as for b tagging.
-
-::::::::::::::: callout
-
-## Spplication instructions coming soon!
-
-The [CMS Open Data Guide](https://cms-opendata-guide.web.cern.ch/) will include the scale factor data files and application instructions for 2015 and 2016 Open Data.
-
-:::::::::::::::
 
 ::::::::::: keypoints
 
