@@ -241,16 +241,8 @@ would have exactly 0 momentum in the $x$ or $y$ direction. If all of the collisi
 this vector sum would also be 0. In real life, some particles are not detected at all by CMS, and all particles are measured with slight imperfections, creating MET. Types of
 particles that would produce "real" MET include neutrinos, dark matter particles, or other exotic particles that would not interact in CMS.
 
-Since energy corrections are made to the particle flow jets (see the last page in this lesson), those corrections are propagated to MET by adding back the momentum vectors of the
-original jets and then subtracting the momentum vectors of the corrected jets. This correction is called "Type 1" and is standard for all CMS analyses.
-
 | Object property | Type | Description |
 | --------------- | ---- | ----------- |
-| MET_MetUnclustEnUpDeltaX | Float_t | Delta (METx_mod-METx) Unclustered Energy Up |
-| MET_MetUnclustEnUpDeltaY | Float_t | Delta (METy_mod-METy) Unclustered Energy Up |
-| MET_covXX | Float_t | xx element of met covariance matrix |
-| MET_covXY | Float_t | xy element of met covariance matrix |
-| MET_covYY | Float_t | yy element of met covariance matrix |
 | MET_phi | Float_t | phi |
 | MET_pt | Float_t | pt |
 | MET_significance | Float_t | MET significance |
